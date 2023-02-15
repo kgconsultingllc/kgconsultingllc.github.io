@@ -1,4 +1,6 @@
-import { read } from "xlsx"
+import _ from "lodash";
+import moment from "moment";
+import { read, utils, SSF } from "xlsx"
 import { useState } from "react"
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { Box, Card, CardContent, CardActions, Button, IconButton, Typography} from "@mui/material"
@@ -7,13 +9,15 @@ import CustomerList from "./CustomerList"
 import SheetSelect from "./SheetSelect"
 import ColumnMap from "./ColumnMap"
 import { useAppDispatch, useAppSelector } from "./../reducers";
-import { uploadWorkbook, generateChart, reset } from "./FileSlice";
+import { uploadWorkbook, reset } from "./FileSlice";
+import { generateChart } from "./ChartSlice";
 import type { ChangeEvent } from "react"
 
 function Main() {
   const [name, setName] = useState<string>();
   const workbook = useAppSelector(state => state.file.wb);
   const valid = useAppSelector(state => state.file.valid);
+  const invoices = useAppSelector(state => state.file.invoices);
   const dispatch = useAppDispatch();
 
   const handleChange = async (ev: ChangeEvent<HTMLInputElement>) => {
@@ -22,9 +26,26 @@ function Main() {
       return ;
     const file = files[0]
     setName(file.name);
+
     const buffer = await file.arrayBuffer();
     const wb = read(buffer, {cellDates: true})
-    dispatch(uploadWorkbook(wb))
+
+    const kurec = _.mapValues(wb.Sheets, sheet => {
+      const data = utils.sheet_to_json(sheet, {header: 1})
+      const headers = _.first(data) as string[];
+      const rows = _.drop(data, 1)
+
+      return rows.map((row: any) => {
+        row = row.map((value: string) => {
+          if(_.isDate(value))
+            return moment(value).format()
+          return value
+        });
+        return _.zipObject(headers, row);
+      })
+    });
+
+    dispatch(uploadWorkbook(kurec))
   }
   console.log(workbook);
 
@@ -71,7 +92,7 @@ function Main() {
       </CardContent>
       <CardActions>
         { valid &&
-          <Button onClick={() => dispatch(generateChart())}>Charts</Button>
+          <Button onClick={() => dispatch(generateChart(invoices))}>Charts</Button>
         }
       </CardActions>
     </Card>

@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import file from "./components/FileSlice";
+import chart from "./components/ChartSlice";
 
 export const store = configureStore({
   reducer: {
-    file: file
+    file: file,
+    chart: chart
   }
 })
 

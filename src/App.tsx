@@ -12,7 +12,7 @@ function App() {
       padding: 0,
       margin: 0,
     }}>
-      <Container maxWidth="md" sx={{flex: "1 0 auto", maxHeight: '100%', overflow: 'auto'}}>
+      <Container maxWidth="xl" sx={{flex: "1 0 auto", maxHeight: '100%', overflow: 'auto'}}>
         <AppBar position="static">
           <Toolbar>
             <img src={logo} width="32px" alt="logo"></img>
