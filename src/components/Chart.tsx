@@ -13,18 +13,23 @@ const ChartPage = () => {
     .value()
 
   const datasets = [{
-    type: 'bar' as const,
-    label: 'Turnover',
-    data: _.map(spans, row => Number(row.credit))
-  }, {
     type: 'line' as const,
     label: 'Exposed Credit line',
+    borderColor: '#ff6361',
+    backgroundColor: '#ff6361',
     // @ts-ignore
     data: _.map(spans, row => Math.max(Number(numeral(row.credit).subtract(row.creditLine).value()), 0))
   }, {
     type: 'line' as const,
+    borderColor: '#ffa600',
+    backgroundColor: "#ffa600",
     label: 'Credit line',
     data: _.map(spans, row => Number(row.creditLine))
+  },{
+    type: 'bar' as const,
+    label: 'Turnover',
+    backgroundColor: '#003f5c',
+    data: _.map(spans, row => Number(row.credit))
   }]
 
   const options = {

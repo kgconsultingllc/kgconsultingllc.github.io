@@ -16,7 +16,6 @@ import type { ChangeEvent } from "react"
 
 function Main() {
   const dispatch = useAppDispatch();
-  const workbook = useAppSelector(state => state.file.wb);
   const valid = useAppSelector(state => state.file.valid);
   const invoices = useAppSelector(state => state.file.invoices);
   const show = useAppSelector(state => state.chart.spans.length > 0);
@@ -49,7 +48,6 @@ function Main() {
 
     dispatch(uploadWorkbook(kurec))
   }
-  console.log(show, workbook);
 
   return (
     <Card>
