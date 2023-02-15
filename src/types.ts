@@ -25,3 +25,8 @@ export type SpanData = {
 }
 
 export type SpanOptions = 'day' | 'week' | 'month' | 'quarter'
+
+export type CustomerId = {
+  name: string;
+  id: number;
+}

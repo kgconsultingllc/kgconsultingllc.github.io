@@ -2,24 +2,15 @@ import _ from "lodash";
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useAppDispatch, useAppSelector } from "./../reducers";
-import { selectCustomer } from "./FileSlice";
+// import { selectCustomer } from "./FileSlice";
+import { selectCustomer } from "./ChartSlice";
 import InvoiceIndicator from "./InvoiceIndicator"
 
 
 const CustomerList = () => {
   const dispatch = useAppDispatch();
-  // const worksheetJSON = useAppSelector(state => state.file.worksheetJSON)
-  const customer = useAppSelector(state => state.file.customer);
+  const customer = useAppSelector(state => state.chart.customer);
   const customers = useAppSelector(state  => state.file.uxCustomers);
-  // const { nameColumn, idColumn } = useAppSelector(state  => ({
-  //   nameColumn: state.file.columnMap['customerName'],
-  //   idColumn: state.file.columnMap['customerNumber']
-  // }));
-
-  // const customers = _(worksheetJSON).map(item => ({
-  //   name: item[nameColumn],
-  //   id: item[idColumn]
-  // })).filter(item => !!item.id).uniqBy('id').value()
 
   if (!customers.length)
     return <></>

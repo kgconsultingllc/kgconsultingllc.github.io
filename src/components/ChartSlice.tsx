@@ -3,8 +3,7 @@ import _ from "lodash";
 import moment, { Moment } from "moment"
 import numeral from "numeral"
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
-// import { selectSheetName, uploadWorkbook } from "./FileSlice";
-import type { Operation, SpanOptions, SpanData, InvoceRowType } from "./../types"
+import type { CustomerId, Operation, SpanOptions, SpanData, InvoceRowType } from "./../types"
 import type { PayloadAction } from '@reduxjs/toolkit'
 
 const SPAN_GENERATORS: {[key in SpanOptions]: (arg1: Moment) => string} = {
@@ -18,6 +17,7 @@ export interface ChartState {
   timespan: SpanOptions,
   invoices: InvoceRowType[],
   operations: Operation[],
+  customer?: CustomerId
   spans: SpanData[],
   maxCreditLine: number
 }
@@ -27,6 +27,7 @@ const initialState: ChartState = {
   invoices: [],
   operations: [],
   spans: [],
+  customer: undefined,
   maxCreditLine: 50000
 }
 
@@ -34,8 +35,10 @@ export const chartSlice = createSlice({
   name: 'chart',
   initialState,
   reducers: {
+    selectCustomer: (state, action: PayloadAction<CustomerId>) => {
+      state.customer = action.payload;
+    },
     generateChart: (state, action: PayloadAction<InvoceRowType[]>) => {
-      console.log('generate', action.payload, state)
       state.invoices = action.payload
       state.operations = _.chain(action.payload)
         .reduce((curr: Operation[], invoice: InvoceRowType) => {
@@ -44,7 +47,8 @@ export const chartSlice = createSlice({
             customerName,
             customerNumber,
             invoiceNumber,
-            amount, date: moment(invoiceDate).utc().format()
+            amount,
+            date: moment(invoiceDate).utc().format()
           });
           if (invoicePaymentDate)
             curr.push({
@@ -60,8 +64,8 @@ export const chartSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addMatcher(isAnyOf(generateChart), (state) => {
-      const rows = state.operations;
+    builder.addMatcher(isAnyOf(generateChart, selectCustomer), (state) => {
+      const rows = _.filter(state.operations, invoice => invoice.customerNumber === state.customer?.id);
       const end = _.maxBy(rows, 'date')
       const start = _.minBy(rows, 'date')
       const momentStart = moment(start?.date);
@@ -83,7 +87,7 @@ export const chartSlice = createSlice({
       const data = _.map(timespans, (spanDate) => {
         const span = moment(spanDate);
         // beause of the isAfter part it applies operators to each month
-        return _.filter(state.operations, (op) => span.isAfter(moment(op.date)))
+        return _.filter(rows, (op) => span.isAfter(moment(op.date)))
           .reduce((data, op) => {
             data.credit = String(numeral(data.credit).add(op.amount).value());
             return data
@@ -101,7 +105,8 @@ export const chartSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-  generateChart
+  generateChart,
+  selectCustomer
 } = chartSlice.actions
 
 export default chartSlice.reducer

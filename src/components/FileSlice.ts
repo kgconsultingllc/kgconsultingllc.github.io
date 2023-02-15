@@ -2,7 +2,7 @@ import _ from "lodash";
 // import moment from "moment";
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import type { InvoceRowType } from '../types'
+import type { InvoceRowType, CustomerId } from '../types'
 
 const DEFAULT_COLUMN_MAP = {
   "invoiceNumber": 'Invocoice number',
@@ -12,11 +12,7 @@ const DEFAULT_COLUMN_MAP = {
   'invoiceAmount': "Invoiced amount (EUR)",
   'customerPaymentTerms': "Payment terms (days)",
   'customerMaxCreditLine': "Max Credit line",
-  'invoicePaymentDate': "Days of payment",
-}
-type CustomerId = {
-  name: string;
-  id: string;
+  'invoicePaymentDate': "Date of payment",
 }
 
 type WorkBookSnapshot = {[key: string]: {[key: string]: any}[]}
@@ -27,7 +23,7 @@ export interface FileState {
   worksheet: string;
   worksheetJSON: {[key: string]: any}[];
   columnMap: {[key: string]: string}
-  customer?: CustomerId
+  // customer?: CustomerId
   uxCustomers: CustomerId[]
   invoices: InvoceRowType[]
   valid: boolean
@@ -39,7 +35,7 @@ const initialState: FileState = {
   worksheet: "",
   worksheetJSON: [],
   columnMap: DEFAULT_COLUMN_MAP,
-  customer: undefined,
+  // customer: undefined,
   uxCustomers: [],
   invoices: [],
   valid: false
@@ -53,13 +49,9 @@ export const fileSlice = createSlice({
       state.wb = action.payload
       state.worksheet = _.first(_.keys(action.payload)) || "";
     },
-    selectCustomer: (state, action: PayloadAction<CustomerId>) => {
-      state.customer = action.payload
-    },
     selectSheetName: (state, action: PayloadAction<string>) => {
       state.worksheet = action.payload
       state.columnMap = initialState.columnMap
-      state.customer = initialState.customer
     },
     updateColumnMap: (state, action: PayloadAction<{key: string, value:string}>) => {
       const {key, value} = action.payload;
@@ -106,9 +98,8 @@ export const fileSlice = createSlice({
           .uniqBy('id')
           .value()
         state.uxCustomers = customers;
-        state.customer = customers[0]
       })
-      .addMatcher(isAnyOf(selectSheetName, uploadWorkbook, selectCustomer, updateColumnMap), (state) => {
+      .addMatcher(isAnyOf(selectSheetName, uploadWorkbook, updateColumnMap), (state) => {
         if (!state.wb) {
           state.valid = false
           return ;
@@ -116,10 +107,6 @@ export const fileSlice = createSlice({
         if (!state.uxCustomers.length) {
           state.valid = false
           return ;
-        }
-        if (!state.customer) {
-          state.valid = false;
-          return;
         }
         const hasEmpty = _(state.columnMap).values().filter(val => !Boolean(val)).value();
         if (hasEmpty.length){
@@ -137,7 +124,7 @@ export const fileSlice = createSlice({
             .mapKeys((_, key) => PARSE_PARSE_MAP[key])
             .value()
           })
-          .filter(invoice => invoice.customerNumber === state.customer?.id)
+          // .filter(invoice => invoice.customerNumber === state.customer?.id)
           // .map((invoice) => {
           //   const daysToPayment = moment(invoice.invoicePaymentDate).diff(moment(invoice.invoiceDate), 'days');
           //   invoice._invoiceOverdue = Math.max(0, daysToPayment - invoice.customerPaymentTerms)
@@ -158,7 +145,7 @@ export const {
   uploadWorkbook,
   selectSheetName,
   updateColumnMap,
-  selectCustomer,
+  // selectCustomer,
   generateChart
 } = fileSlice.actions
 

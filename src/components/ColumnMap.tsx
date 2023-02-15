@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import { useAppDispatch, useAppSelector } from "./../reducers";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Divider from '@mui/material/Divider';
 import { updateColumnMap } from './FileSlice';
 
 const LABELS: {[key: string]: string} = {
@@ -33,7 +34,7 @@ export default function ColumnMap() {
   };
 
   return (
-    <Stack direction={'row'}>
+    <Stack direction={'row'} gap={1}>
       <Box gap={2} display="flex" flexDirection={'column'} p={2} flexGrow={1}>
         {_.map(map, ((value: string, key: string) => {
           return (
@@ -70,8 +71,9 @@ export default function ColumnMap() {
         )}))
         }
       </Box>
-      <Stack direction={'column'} width="320px" border={1} borderRadius={1} p={2}>
-        <Typography variant="h6">Sample data row</Typography>
+      <Divider orientation={'vertical'} flexItem />
+      <Stack direction={'column'} width="320px" px={2}>
+        <Typography variant="h6" gutterBottom >Sample data row</Typography>
         {
           _.toPairs(json).map((values, idx) => (
           <Box pb={1} key={idx}>

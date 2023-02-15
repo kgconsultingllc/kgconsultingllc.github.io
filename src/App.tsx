@@ -11,8 +11,9 @@ function App() {
       backgroundColor: theme => theme.palette.background.default,
       padding: 0,
       margin: 0,
+      overflow: 'auto',
     }}>
-      <Container maxWidth="xl" sx={{flex: "1 0 auto", maxHeight: '100%', overflow: 'auto'}}>
+      <Container maxWidth="lg">
         <AppBar position="static">
           <Toolbar>
             <img src={logo} width="32px" alt="logo"></img>

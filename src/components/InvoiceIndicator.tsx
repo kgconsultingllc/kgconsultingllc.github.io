@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 import {  useAppSelector } from "./../reducers";
 
 export default function InvoiceIndicator() {
-  const customer = useAppSelector(state => state.file.customer);
+  const customer = useAppSelector(state => state.chart.customer);
   const invoiceColumnMap = useAppSelector(state => state.file.columnMap['invoiceNumber']);
   const customerNumberMap = useAppSelector(state => state.file.columnMap['customerNumber']);
   const json = useAppSelector(state => state.file.worksheetJSON);
