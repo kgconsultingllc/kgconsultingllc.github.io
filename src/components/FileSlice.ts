@@ -18,12 +18,11 @@ const DEFAULT_COLUMN_MAP = {
 type WorkBookSnapshot = {[key: string]: {[key: string]: any}[]}
 
 export interface FileState {
-  filename: string;
+  filename?: string;
   wb: WorkBookSnapshot;
   worksheet: string;
   worksheetJSON: {[key: string]: any}[];
   columnMap: {[key: string]: string}
-  // customer?: CustomerId
   uxCustomers: CustomerId[]
   invoices: InvoceRowType[]
   valid: boolean
@@ -35,7 +34,6 @@ const initialState: FileState = {
   worksheet: "",
   worksheetJSON: [],
   columnMap: DEFAULT_COLUMN_MAP,
-  // customer: undefined,
   uxCustomers: [],
   invoices: [],
   valid: false
@@ -56,7 +54,9 @@ export const fileSlice = createSlice({
     updateColumnMap: (state, action: PayloadAction<{key: string, value:string}>) => {
       const {key, value} = action.payload;
       state.columnMap[key] = value;
-
+    },
+    setFileName: (state, action: PayloadAction<string>) => {
+      state.filename = action.payload;
     },
     reset: () => {
       return initialState
@@ -124,12 +124,6 @@ export const fileSlice = createSlice({
             .mapKeys((_, key) => PARSE_PARSE_MAP[key])
             .value()
           })
-          // .filter(invoice => invoice.customerNumber === state.customer?.id)
-          // .map((invoice) => {
-          //   const daysToPayment = moment(invoice.invoicePaymentDate).diff(moment(invoice.invoiceDate), 'days');
-          //   invoice._invoiceOverdue = Math.max(0, daysToPayment - invoice.customerPaymentTerms)
-          //   return invoice;
-          // })
           .orderBy('invoiceDate')
           .value() as InvoceRowType[];
 
@@ -145,7 +139,7 @@ export const {
   uploadWorkbook,
   selectSheetName,
   updateColumnMap,
-  // selectCustomer,
+  setFileName,
   generateChart
 } = fileSlice.actions
 

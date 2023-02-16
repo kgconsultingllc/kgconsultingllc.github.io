@@ -35,6 +35,9 @@ export const chartSlice = createSlice({
   name: 'chart',
   initialState,
   reducers: {
+    selectTimestamp: (state, action: PayloadAction<SpanOptions>) => {
+      state.timespan = action.payload;
+    },
     selectCustomer: (state, action: PayloadAction<CustomerId>) => {
       state.customer = action.payload;
     },
@@ -64,7 +67,7 @@ export const chartSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addMatcher(isAnyOf(generateChart, selectCustomer), (state) => {
+    builder.addMatcher(isAnyOf(generateChart, selectCustomer, selectTimestamp), (state) => {
       const rows = _.filter(state.operations, invoice => invoice.customerNumber === state.customer?.id);
       const end = _.maxBy(rows, 'date')
       const start = _.minBy(rows, 'date')
@@ -106,7 +109,8 @@ export const chartSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   generateChart,
-  selectCustomer
+  selectCustomer,
+  selectTimestamp
 } = chartSlice.actions
 
 export default chartSlice.reducer

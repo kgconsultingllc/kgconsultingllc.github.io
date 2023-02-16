@@ -2,7 +2,7 @@ import _ from "lodash";
 import moment from "moment";
 import numeral from "numeral"
 import { Chart }  from "react-chartjs-2";
-import { Card} from "@mui/material"
+import { Card } from "@mui/material"
 import { useAppSelector } from "./../reducers";
 
 const ChartPage = () => {
