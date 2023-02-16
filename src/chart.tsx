@@ -12,6 +12,7 @@ import {
   LineController,
   BarController,
 } from 'chart.js'
+// @ts-ignore
 import { Chart } from 'react-chartjs-2';
 // ChartJS.register(ArcElement, Tooltip, Legend);
 ChartJS.register(
