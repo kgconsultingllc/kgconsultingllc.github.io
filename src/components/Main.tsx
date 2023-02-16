@@ -38,17 +38,17 @@ function Main() {
               </Box>
               <SheetSelect />
               <ColumnMap />
+              <CardActions>
+                { valid &&
+                  <Button onClick={() => dispatch(generateChart(invoices))}>Charts</Button>
+                }
+              </CardActions>
             </>
           ) : (
             <UploadField />
           )
         }
       </CardContent>
-      <CardActions>
-        { valid &&
-          <Button onClick={() => dispatch(generateChart(invoices))}>Charts</Button>
-        }
-      </CardActions>
     </Card>
   );
 }
